@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categorias;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 use mysql_xdevapi\Table;
 
@@ -71,7 +72,7 @@ class CategoriasController extends Controller
         $Categoria->save();
 
         //REDIRECCIONAR
-        return redirect('adminCategorias')->with(['mensaje' => 'la categoria se dio de alta correctamente']);
+        return redirect('adminCategorias')->with(['mensaje' => 'la categoria se dio de alta correctamente','class'=>'success']);
     }
 
     /**
@@ -122,7 +123,27 @@ class CategoriasController extends Controller
         $Categoria->save();
 
         //REDIRECCIONO A LA VISTA PRINCIPAL CON UN MENSAJE
-        return redirect('adminCategorias')->with(['mensaje'=>'La categoria ' . $catNombre . ' ha sido modificada con exito']);
+        return redirect('adminCategorias')->with(['mensaje'=>'La categoria ' . $catNombre . ' ha sido modificada con exito','class'=>'success']);
+    }
+
+    /*FUNCION PARA CONSULTAR SI EXISTEN CATEGORIAS RELACIONADAS CON PRODUCTOS DADOS DE ALTA*/
+    private function productsByCategories($id){
+        $check=Producto::where('idCategoria',$id)->count();
+        return $check;
+    }
+
+    /*FUNCION PARA DAR DE BAJA UNA CATEGORIA*/
+    public function confirmarBaja($id){
+        //OBTENGO LOS DATOS DE LA CATEGORIA A ELIMINAR
+        $Categoria=Categorias::find($id);
+
+        //VALIDO QUE NO HAYA CATEGORIAS RELACIONADAS CON PRODUCTOS DADOS DE ALTA
+        if($this->productsByCategories($id)==0){
+            return view('/Categorias.eliminarCategoria',['Categoria'=>$Categoria]);
+        }
+
+        //SI NO SE PUEDE ELIMINAR REDIRIJO A LA PANTALLA PRINCIPAL DE CATEGORIAS CON UN MENSAJE
+        return redirect('/adminCategorias')->with(['mensaje'=>'No se puede eliminar la categoria: ' . $Categoria->catNombre . ' porque tiene productos relacionados','class'=>'warning']);
     }
 
     /**
@@ -131,8 +152,16 @@ class CategoriasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        //OBTENGO EL ID A ELIMINAR
+        $idCategoria = $request->idCategoria;
+        $catNombre =$request->catNombre;
+
+        //EJECUTO EL METODO DESTROY PARA ELIMINAR EL REGISTRO
+        Categorias::destroy($idCategoria);
+
+        //REDIRIJO A LA PANTALLA PRINCIPAL DE CATEGORIAS
+        return redirect('/adminCategorias')->with(['mensaje'=>'La categoria: ' . $catNombre. ' fue eliminada con exito','class'=>'success']);
     }
 }

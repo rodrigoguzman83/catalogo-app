@@ -78,7 +78,7 @@ class MarcaController extends Controller
         $Marca->save();
 
         //REDIRECCIONAR
-        return redirect('adminMarcas')->with(['mensaje' => 'la marca se dio de alta correctamente']);
+        return redirect('adminMarcas')->with(['mensaje' => 'la marca se dio de alta correctamente','class'=>'success']);
     }
 
     /**
@@ -126,9 +126,10 @@ class MarcaController extends Controller
         //GUARDO NUEVOS VALORES
         $Marca->save();
         //REDIRECCIONO
-        return redirect('adminMarcas')->with(['mensaje' => 'Marca: ' . $mkNombre.' la marca se modifico correctamente']);
+        return redirect('adminMarcas')->with(['mensaje' => 'Marca: ' . $mkNombre.' la marca se modifico correctamente','class'=>'success']);
     }
 
+    //VALIDO QUE HAYA O NO MARCAS EN LA TABLA PRODUCTOS
     private function productByMarca($idMarca){
         $check=Producto::where('idMarca',$idMarca)->count();
         return $check;
@@ -140,11 +141,14 @@ class MarcaController extends Controller
         //OBTENER DATOS DE LA MARCA
         $Marca=Marca::find($id);
 
+        //VALIDO QUE HAYA O NO MARCAS EN LA TABLA PRODUCTOS
         //LLAMO AL METODO PRODUCBYMARCA
         if($this->productByMarca($id)==0){
-            return 'vista con datos para la confirmacion de baja';
+            return view('Marcas.eliminarMarca',['Marca'=>$Marca]);
         }
-        return 'confirmacion de baja';
+        return redirect('/adminMarcas')
+            ->with(['mensaje'=>'no se puede eliminar la marca: ' . $Marca->mkNombre . ' porque tiene productos asignados',
+            'class'=>'danger']);
     }
 
     /**
@@ -153,8 +157,17 @@ class MarcaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         //
+        $idMarca=$request->idMarca;
+        $mkNombre=$request->mkNombre;
+
+        //OPCION VALIDA PARA BORRAR
+        //Marca::where('idMarca',$idMarca)->delete();
+        Marca::destroy($idMarca);
+
+        return redirect('/adminMarcas')
+            ->with(['mensaje'=>'Marca: ' . $mkNombre . ' eliminada correctamente','class'=>'success']);
     }
 }

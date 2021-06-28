@@ -5,7 +5,8 @@
         <h1>Panel de administración de categorias</h1>
 
         @if ( session('mensaje') )
-            <div class="alert alert-success">
+            <div class="alert alert-{{(session('class'))}}">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 {{ session('mensaje') }}
             </div>
         @endif

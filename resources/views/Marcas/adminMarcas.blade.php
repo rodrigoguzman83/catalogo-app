@@ -5,7 +5,8 @@
         <h1>Panel de administración de marcas</h1>
 
         @if ( session('mensaje') )
-            <div class="alert alert-success">
+            <div class="alert alert-{{(session('class'))?'danger':'success'}}">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 {{ session('mensaje') }}
             </div>
         @endif
