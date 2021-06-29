@@ -34,14 +34,14 @@
                     <td>{{$producto->relCategorias->catNombre}}</td>
                     <td>$ {{$producto->prdPrecio}}</td>
                     <td>{{$producto->prdPresentacion}}</td>
-                    <td><img src="{{'/productos/'.$producto->prdImagen}}" alt="{{$producto->prdNombre}}" width="25%" class="img-thumbnail d-block" ></td>
+                    <td><img src="{{'/productos/'.$producto->prdImagen}}" alt="{{$producto->prdNombre}}" class="img-thumbnail" ></td>
                     <td>
-                        <a href="/modificarProducto" class="btn btn-secondary">
+                        <a href="/modificarProducto/{{$producto->idProducto}}" class="btn btn-secondary">
                             Modificar
                         </a>
                     </td>
                     <td>
-                        <a href="/eliminarProducto" class="btn btn-danger">
+                        <a href="/eliminarProducto/{{$producto->idProducto}}" class="btn btn-danger">
                             Eliminar
                         </a>
                     </td>
